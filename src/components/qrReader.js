@@ -1,13 +1,14 @@
 import {useEffect, useState} from "react";
 import { QrReader } from "react-qr-reader";
 
+const url = "https://ginocerruti.com/item/";
+
 export const Test = () => {
-    const [selected, setSelected] = useState("environment");
     const [startScan, setStartScan] = useState(false);
     const [data, setData] = useState([]);
+    const [error, setError] = useState(false);
 
     useEffect(() => {
-        console.log("first");
         const cart = localStorage.getItem('cart');
         if(cart) {
             setData(JSON.parse(cart));
@@ -16,11 +17,21 @@ export const Test = () => {
 
    const onResult = (result, error) => {
        if (!!result) {
-           setData(prevState => {
-               const newState = {...prevState, [result?.text]: 1};
-               localStorage.setItem('cart', JSON.stringify(newState))
-               return newState
-           });
+           if (result?.text?.startsWith(url)) {
+               const textAfterWord = result?.text?.slice(url.length)?.trim();
+               setData(prevState => {
+                       const newState = {...prevState, [textAfterWord]: 1};
+                       localStorage.setItem('cart', JSON.stringify(newState))
+                       return newState
+                   }
+               );
+               setStartScan(false);
+               setError(false);
+           } else {
+               setError(true);
+           }
+       } else {
+
        }
 
        if (!!error) {
@@ -63,17 +74,14 @@ export const Test = () => {
             >
                 {startScan ? "Stop Scan" : "Start Scan"}
             </button>
+            {error && <div>Error (qr need starts with {url})</div>}
             {startScan && (
                 <>
-                    <select onChange={(e) => setSelected(e.target.value)}>
-                        <option value={"environment"}>Back Camera</option>
-                        <option value={"user"}>Front Camera</option>
-                    </select>
                     <QrReader
-                        facingMode={selected}
+                        constraints={{ facingMode: 'environment' }}
                         delay={1000}
                         onResult={onResult}
-                        style={{ width: "300px" }}
+                        style={{ minWidth: "400px" }}
                     />
                 </>
             )}

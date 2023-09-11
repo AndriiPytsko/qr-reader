@@ -22,10 +22,10 @@ const BasketProvider = props => {
       const itemIndex = prevState.findIndex(item => item.id === id);
       if (itemIndex === -1) return prevState;
       const newItem = prevState[itemIndex];
-      newItem.count = newItem.count + 1;
+      const count = newItem.count + 1;
       const newState = [
         ...prevState.slice(0, itemIndex),
-        newItem,
+        { ...newItem, count },
         ...prevState.slice(itemIndex + 1)
       ];
       localStorage.setItem(STORAGE_CART_NAME, JSON.stringify(newState));
@@ -38,10 +38,41 @@ const BasketProvider = props => {
       const itemIndex = prevState.findIndex(item => item.id === id);
       if (itemIndex === -1) return prevState;
       const newItem = prevState[itemIndex];
-      newItem.count = newItem.count > 1 ? newItem.count - 1 : 1;
+      const count = newItem.count > 1 ? newItem.count - 1 : 1;
       const newState = [
         ...prevState.slice(0, itemIndex),
-        newItem,
+        { ...newItem, count },
+        ...prevState.slice(itemIndex + 1)
+      ];
+      localStorage.setItem(STORAGE_CART_NAME, JSON.stringify(newState));
+      return newState;
+    });
+  };
+
+  const setItemCount = (id, count) => {
+    setData(prevState => {
+      const itemIndex = prevState.findIndex(item => item.id === id);
+      if (itemIndex === -1) return prevState;
+      const newItem = prevState[itemIndex];
+      const newState = [
+        ...prevState.slice(0, itemIndex),
+        { ...newItem, count },
+        ...prevState.slice(itemIndex + 1)
+      ];
+      localStorage.setItem(STORAGE_CART_NAME, JSON.stringify(newState));
+      return newState;
+    });
+  };
+
+  const checkItemCount = id => {
+    setData(prevState => {
+      const itemIndex = prevState.findIndex(item => item.id === id);
+      if (itemIndex === -1) return prevState;
+      const newItem = prevState[itemIndex];
+      if (newItem.count) return prevState;
+      const newState = [
+        ...prevState.slice(0, itemIndex),
+        { ...newItem, count: 1 },
         ...prevState.slice(itemIndex + 1)
       ];
       localStorage.setItem(STORAGE_CART_NAME, JSON.stringify(newState));
@@ -89,7 +120,9 @@ const BasketProvider = props => {
         decrementItemCount,
         incrementItemCount,
         addItemToBasket,
-        clearAllBasket
+        clearAllBasket,
+        setItemCount,
+        checkItemCount
       }}
     >
       {children}

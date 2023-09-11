@@ -10,10 +10,24 @@ export function BasketScreen() {
     deleteItem,
     incrementItemCount,
     decrementItemCount,
-    clearAllBasket
+    clearAllBasket,
+    setItemCount,
+    checkItemCount
   } = useContext(basketContext);
 
   const [isOpenModal, setOpenModal] = useState(false);
+
+  const handleChangeCount = e => {
+    const newCount = +e.target.value;
+    const id = e.target.name;
+    setItemCount(id, newCount);
+  };
+
+  const handleBlurCount = e => {
+    const id = e.target.name;
+    console.log(id);
+    checkItemCount(id);
+  };
 
   return (
     <div>
@@ -53,7 +67,14 @@ export function BasketScreen() {
                   >
                     -
                   </button>
-                  <span className="basketItemCount">{item.count}</span>
+                  <input
+                    className="inputField basketItemCount"
+                    value={item.count}
+                    name={item.id}
+                    type="number"
+                    onBlur={handleBlurCount}
+                    onChange={handleChangeCount}
+                  />
                   <button
                     className="buttons"
                     onClick={() => incrementItemCount(item.id)}

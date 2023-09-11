@@ -1,0 +1,23 @@
+.scanButton {
+  width: 300px;
+  padding: 18px 20px;
+  border: 1px solid black;
+  border-radius: 20px;
+  font-size: 18px;
+  background: transparent;
+  text-align: center;
+  color: black;
+}
+.scannerContainer {
+  width: 100vw;
+  margin-top: 100px;
+  min-height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+section {
+  width: 100%;
+}
